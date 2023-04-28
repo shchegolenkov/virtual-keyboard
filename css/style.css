@@ -1,6 +1,11 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   background-image: linear-gradient(to top, #c1dfc4 0%, #deecdd 100%);
   background-attachment: fixed;
+  color: #262626;
 }
 
 .container {
@@ -17,7 +22,7 @@ body {
   width: 700px;
   min-width: 500px;
   max-width: 900px;
-  min-height: 200px;
+  min-height: 100px;
   max-height: 400px;
   height: 200px;
   margin: 10px auto 10px;
@@ -33,7 +38,7 @@ body {
 
 .textarea:hover,
 .textarea:focus {
-  box-shadow: rgba(0, 0, 0, 0.4) 0px 3px 8px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 3px 8px;
 }
 
 .textarea::-webkit-resizer {
@@ -42,19 +47,27 @@ body {
 
 .keyboard {
   display: flex;
-  width: 704px;
+  flex-wrap: wrap;
+  width: 724px;
   margin: 20px;
-  padding: 5px;
+  padding: 10px;
   background-color: #ececec;
   border-radius: 5px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 18px 50px -10px;
+  transition: box-shadow 0.3s;
+}
+
+.keyboard:hover {
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 18px 50px -10px;
 }
 
 .key {
-  width: 44px;
+  width: 40px;
   height: 40px;
   margin: 3px;
   border-radius: 3px;
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   background-color: #fff;
@@ -69,9 +82,33 @@ body {
   box-shadow: rgba(67, 71, 85, 0.7) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
 }
 
-.key:active {
+.key:active, 
+.key--active {
   box-shadow: rgba(67, 71, 85, 0.7) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
-  background-color: #dcf797;
+  background-color: #f0ece2;
+}
+
+.key[data-code='Backspace'],
+.key[data-code='CapsLock'],
+.key[data-code='ShiftLeft'] {
+  width: 100px;
+}
+
+.key[data-code='Tab'] {
+  width: 50px;
+}
+
+.key[data-code='Delete'] {
+  width: 44px;
+}
+
+.key[data-code='Enter'],
+.key[data-code='ShiftRight'] {
+  width: 86px;
+}
+
+.key[data-code='Space'] {
+  width: 330px;
 }
 
 .description {
