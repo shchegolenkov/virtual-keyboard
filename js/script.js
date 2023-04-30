@@ -45,8 +45,10 @@ const getCurrentShift = () => {
   }
   const keys = keyboard.querySelectorAll('.key');
   for (let i = 0; i < keys.length; i += 1) {
-    if (keys[i].textContent.length === 1 && capslockCount) {
+    if (keys[i].textContent.length === 1 && isShiftActive && capslockCount % 2) {
       keys[i].textContent = Object.values(currentLangBoard)[i].toLowerCase();
+    } else if (keys[i].textContent.length === 1 && !isShiftActive && capslockCount % 2) {
+      keys[i].textContent = Object.values(currentLangBoard)[i].toUpperCase();
     } else {
       keys[i].textContent = Object.values(currentLangBoard)[i];
     }
@@ -59,11 +61,19 @@ const getCurrentCaps = () => {
 
   if (capslockCount % 2) {
     for (let i = 0; i < keys.length; i += 1) {
-      if (keys[i].textContent.length === 1 && keys[i].textContent.match(/[a-zA-Z\u0401\u0451\u0410-\u044f]/)) keys[i].textContent = keys[i].textContent.toUpperCase();
+      if (keys[i].textContent.length === 1
+        && keys[i].textContent.match(/[a-zA-Z\u0401\u0451\u0410-\u044f]/)) {
+        keys[i].textContent = isShiftActive ? keys[i].textContent.toLowerCase()
+          : keys[i].textContent.toUpperCase();
+      }
     }
   } else {
     for (let i = 0; i < keys.length; i += 1) {
-      if (keys[i].textContent.length === 1 && keys[i].textContent.match(/[a-zA-Z\u0401\u0451\u0410-\u044f]/)) keys[i].textContent = keys[i].textContent.toLowerCase();
+      if (keys[i].textContent.length === 1
+        && keys[i].textContent.match(/[a-zA-Z\u0401\u0451\u0410-\u044f]/)) {
+        keys[i].textContent = isShiftActive ? keys[i].textContent.toUpperCase()
+          : keys[i].textContent.toLowerCase();
+      }
     }
     capslockKey.classList.remove('key--active');
   }
@@ -78,8 +88,8 @@ const switchLang = () => {
   for (let i = 0; i < keys.length; i += 1) {
     keys[i].textContent = Object.values(currentLangBoard)[i];
   }
-  getCurrentCaps();
-  getCurrentShift();
+  if (capslockCount % 2) getCurrentCaps();
+  if (isShiftActive) getCurrentShift();
 };
 
 const renderKeyText = (key, text) => {
@@ -130,20 +140,20 @@ const removePrevSym = () => {
   }
 };
 
-const pressedKeyCodes = [];
+let lastKeyCodeByMouse = null;
 
 const handleKeyDown = (event) => {
   event.preventDefault();
   const keyCode = event.code || event.target.getAttribute('data-code');
-  pressedKeyCodes.push(keyCode);
+  if (!event.code) lastKeyCodeByMouse = event.target.getAttribute('data-code');
   const caretPosition = textarea.selectionStart;
   const currentBoard = selectLangBoard();
-
   if (keyCode in currentBoard) {
     textarea.focus();
     keyboard.querySelector(`[data-code="${keyCode}"]`).classList.add('key--active');
 
     if (currentBoard[keyCode].length === 1) {
+      if (textarea.selectionEnd !== caretPosition) removeNextSym();
       textarea.value = textarea.value.slice(0, caretPosition)
         + keyboard.querySelector(`[data-code="${keyCode}"]`).textContent + textarea.value.slice(caretPosition);
       textarea.selectionEnd = caretPosition + 1;
@@ -171,12 +181,14 @@ const handleKeyDown = (event) => {
         if (event.ctrlKey) switchLang();
         break;
       case 'CapsLock':
-        capslockCount += 1;
+        if (!event.repeat) capslockCount += 1;
         getCurrentCaps();
         break;
       case 'ShiftLeft':
-        isShiftActive = true;
-        getCurrentShift();
+        if (!event.repeat) {
+          isShiftActive = true;
+          getCurrentShift();
+        }
         break;
       default:
         break;
@@ -197,12 +209,13 @@ const handleKeyUp = (event) => {
   if (keyCode in currentBoard && keyCode !== 'CapsLock') {
     keyboard.querySelector(`[data-code="${keyCode}"]`).classList.remove('key--active');
   }
-  if (!keyCode) {
-    pressedKeyCodes.forEach((code) => {
-      if (code !== 'CapsLock') {
-        keyboard.querySelector(`[data-code="${code}"]`).classList.remove('key--active');
-      }
-    });
+
+  if (!event.code && lastKeyCodeByMouse && (lastKeyCodeByMouse !== 'CapsLock') && (event.target.getAttribute('data-code') !== lastKeyCodeByMouse)) {
+    keyboard.querySelector(`[data-code="${lastKeyCodeByMouse}"]`).classList.remove('key--active');
+    if (lastKeyCodeByMouse === 'ShiftLeft') {
+      isShiftActive = false;
+      getCurrentShift();
+    }
   }
 
   if (keyCode === 'ShiftLeft') {
