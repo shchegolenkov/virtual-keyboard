@@ -34,7 +34,8 @@ const selectLangBoard = () => {
   return langs[currentLang];
 };
 
-let isShiftActive = 0;
+let isShiftActive = false;
+let capslockCount = 0;
 
 const getCurrentShift = () => {
   const currentLang = window.localStorage.getItem('lang');
@@ -44,11 +45,13 @@ const getCurrentShift = () => {
   }
   const keys = keyboard.querySelectorAll('.key');
   for (let i = 0; i < keys.length; i += 1) {
-    keys[i].textContent = Object.values(currentLangBoard)[i];
+    if (keys[i].textContent.length === 1 && capslockCount) {
+      keys[i].textContent = Object.values(currentLangBoard)[i].toLowerCase();
+    } else {
+      keys[i].textContent = Object.values(currentLangBoard)[i];
+    }
   }
 };
-
-let capslockCount = 0;
 
 const getCurrentCaps = () => {
   const keys = keyboard.querySelectorAll('.key');
@@ -75,8 +78,8 @@ const switchLang = () => {
   for (let i = 0; i < keys.length; i += 1) {
     keys[i].textContent = Object.values(currentLangBoard)[i];
   }
-  getCurrentShift();
   getCurrentCaps();
+  getCurrentShift();
 };
 
 const renderKeyText = (key, text) => {
@@ -127,9 +130,12 @@ const removePrevSym = () => {
   }
 };
 
+const pressedKeyCodes = [];
+
 const handleKeyDown = (event) => {
   event.preventDefault();
   const keyCode = event.code || event.target.getAttribute('data-code');
+  pressedKeyCodes.push(keyCode);
   const caretPosition = textarea.selectionStart;
   const currentBoard = selectLangBoard();
 
@@ -169,7 +175,7 @@ const handleKeyDown = (event) => {
         getCurrentCaps();
         break;
       case 'ShiftLeft':
-        isShiftActive = 1;
+        isShiftActive = true;
         getCurrentShift();
         break;
       default:
@@ -180,7 +186,7 @@ const handleKeyDown = (event) => {
 
 window.addEventListener('keydown', handleKeyDown);
 
-keyboard.addEventListener('mousedown', (event) => {
+window.addEventListener('mousedown', (event) => {
   if (event.target.classList.contains('key')) handleKeyDown(event);
 });
 
@@ -191,12 +197,19 @@ const handleKeyUp = (event) => {
   if (keyCode in currentBoard && keyCode !== 'CapsLock') {
     keyboard.querySelector(`[data-code="${keyCode}"]`).classList.remove('key--active');
   }
+  if (!keyCode) {
+    pressedKeyCodes.forEach((code) => {
+      if (code !== 'CapsLock') {
+        keyboard.querySelector(`[data-code="${code}"]`).classList.remove('key--active');
+      }
+    });
+  }
 
   if (keyCode === 'ShiftLeft') {
-    isShiftActive = 0;
+    isShiftActive = false;
     getCurrentShift();
   }
 };
 
 window.addEventListener('keyup', handleKeyUp);
-keyboard.addEventListener('mouseup', handleKeyUp);
+window.addEventListener('mouseup', handleKeyUp);
