@@ -34,6 +34,22 @@ const selectLangBoard = () => {
   return langs[currentLang];
 };
 
+const switchLang = () => {
+  const changedLang = (window.localStorage.getItem('lang') === 'ru') ? 'en' : 'ru';
+  window.localStorage.setItem('lang', changedLang);
+  const currentLangBoard = selectLangBoard();
+
+  const keys = keyboard.querySelectorAll('.key');
+  for (let i = 0; i < keys.length; i += 1) {
+    keys[i].textContent = Object.values(currentLangBoard)[i];
+  }
+};
+
+const renderKeyText = (key, text) => {
+  const newKey = key;
+  newKey.textContent = text;
+};
+
 const renderKeyButtons = (currLangBoard) => {
   const currLangBoardCodes = Object.keys(currLangBoard);
   const currLangBoardKeys = Object.values(currLangBoard);
@@ -42,7 +58,8 @@ const renderKeyButtons = (currLangBoard) => {
     const keyButton = document.createElement('button');
     keyButton.classList.add('key');
     keyButton.setAttribute('data-code', currLangBoardCodes[i]);
-    keyButton.textContent = currLangBoardKeys[i];
+    // keyButton.textContent = currLangBoardKeys[i];
+    renderKeyText(keyButton, currLangBoardKeys[i]);
     keyboard.appendChild(keyButton);
   }
 };
@@ -81,13 +98,15 @@ const handleKeyDown = (event) => {
   event.preventDefault();
   const keyCode = event.code || event.target.getAttribute('data-code');
   const caretPosition = textarea.selectionStart;
+  const currentBoard = selectLangBoard();
 
-  if (keyCode in boardEn) {
+  if (keyCode in currentBoard) {
     textarea.focus();
+    keyboard.querySelector(`[data-code="${keyCode}"]`).classList.add('key--active');
 
-    if (boardEn[keyCode].length === 1) {
+    if (currentBoard[keyCode].length === 1) {
       textarea.value = textarea.value.slice(0, caretPosition)
-        + boardEn[keyCode] + textarea.value.slice(caretPosition);
+        + keyboard.querySelector(`[data-code="${keyCode}"]`).textContent + textarea.value.slice(caretPosition);
       textarea.selectionEnd = caretPosition + 1;
     }
 
@@ -97,7 +116,8 @@ const handleKeyDown = (event) => {
         textarea.selectionEnd = caretPosition + 4;
         break;
       case 'Enter':
-        textarea.value += '\n';
+        textarea.value = `${textarea.value.slice(0, caretPosition)}\n${textarea.value.slice(caretPosition)}`;
+        textarea.selectionEnd = caretPosition + 1;
         break;
       case 'Delete':
         removeNextSym();
@@ -105,7 +125,17 @@ const handleKeyDown = (event) => {
       case 'Backspace':
         removePrevSym();
         break;
+      case 'ControlLeft':
+        if (event.altKey) switchLang();
+        break;
+      case 'AltLeft':
+        if (event.ctrlKey) switchLang();
+        break;
+      case 'CapsLock':
+        break;
       case 'ShiftLeft':
+        break;
+      case 'ShiftRight':
         break;
       default:
         break;
@@ -115,6 +145,18 @@ const handleKeyDown = (event) => {
 
 window.addEventListener('keydown', handleKeyDown);
 
-keyboard.addEventListener('click', (event) => {
+keyboard.addEventListener('mousedown', (event) => {
   if (event.target.classList.contains('key')) handleKeyDown(event);
 });
+
+const handleKeyUp = (event) => {
+  const keyCode = event.code || event.target.getAttribute('data-code');
+  const currentBoard = selectLangBoard();
+
+  if (keyCode in currentBoard && keyCode !== 'CapsLock') {
+    keyboard.querySelector(`[data-code="${keyCode}"]`).classList.remove('key--active');
+  }
+};
+
+window.addEventListener('keyup', handleKeyUp);
+keyboard.addEventListener('mouseup', handleKeyUp);

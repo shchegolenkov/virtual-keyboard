@@ -75,17 +75,16 @@ body {
   border: none;
   box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
   cursor: pointer;
-  transition: background-color 0.1s, box-shadow 0.3s;
+  transition: background-color 0.18s, box-shadow 0.3s;
 }
 
 .key:hover {
   box-shadow: rgba(67, 71, 85, 0.7) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
 }
 
-.key:active, 
 .key--active {
   box-shadow: rgba(67, 71, 85, 0.7) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
-  background-color: #f0ece2;
+  background-color: #c6d2d9;
 }
 
 .key[data-code='Backspace'],
