@@ -1,4 +1,4 @@
-export const boardRu = {
+export const ruBoard = {
   Backquote: 'ё',
   Digit1: '1',
   Digit2: '2',
@@ -65,7 +65,7 @@ export const boardRu = {
   ControlRight: 'Ctrl',
 };
 
-export const boardShiftRu = {
+export const ruBoardShift = {
   Backquote: 'Ё',
   Digit1: '!',
   Digit2: '"',
@@ -93,7 +93,7 @@ export const boardShiftRu = {
   KeyP: 'З',
   BracketLeft: 'Х',
   BracketRight: 'Ъ',
-  Backslash: '\\',
+  Backslash: '/',
   Delete: 'Del',
   CapsLock: 'Caps Lock',
   KeyA: 'Ф',

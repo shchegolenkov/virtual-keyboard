@@ -1,4 +1,4 @@
-export const boardEn = {
+export const enBoard = {
   Backquote: '`',
   Digit1: '1',
   Digit2: '2',
@@ -65,7 +65,7 @@ export const boardEn = {
   ControlRight: 'Ctrl',
 };
 
-export const boardShiftEn = {
+export const enBoardShift = {
   Backquote: '~',
   Digit1: '!',
   Digit2: '@',
@@ -93,7 +93,7 @@ export const boardShiftEn = {
   KeyP: 'P',
   BracketLeft: '{',
   BracketRight: '}',
-  Backslash: '/',
+  Backslash: '|',
   Delete: 'Del',
   CapsLock: 'Caps Lock',
   KeyA: 'A',

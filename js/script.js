@@ -1,5 +1,5 @@
-import { boardEn } from './engBoard.js';
-import { boardRu } from './ruBoard.js';
+import { enBoard, enBoardShift } from './engBoard.js';
+import { ruBoard, ruBoardShift } from './ruBoard.js';
 
 const renderContent = (parent = document.body) => {
   const content = `
@@ -27,11 +27,43 @@ const selectLangBoard = () => {
   const currentLang = window.localStorage.getItem('lang');
 
   const langs = {
-    ru: boardRu,
-    en: boardEn,
+    ru: ruBoard,
+    en: enBoard,
   };
 
   return langs[currentLang];
+};
+
+let isShiftActive = 0;
+
+const getCurrentShift = () => {
+  const currentLang = window.localStorage.getItem('lang');
+  let currentLangBoard = selectLangBoard();
+  if (isShiftActive) {
+    currentLangBoard = (currentLang === 'ru') ? ruBoardShift : enBoardShift;
+  }
+  const keys = keyboard.querySelectorAll('.key');
+  for (let i = 0; i < keys.length; i += 1) {
+    keys[i].textContent = Object.values(currentLangBoard)[i];
+  }
+};
+
+let capslockCount = 0;
+
+const getCurrentCaps = () => {
+  const keys = keyboard.querySelectorAll('.key');
+  const capslockKey = keyboard.querySelector('[data-code="CapsLock"]');
+
+  if (capslockCount % 2) {
+    for (let i = 0; i < keys.length; i += 1) {
+      if (keys[i].textContent.length === 1 && keys[i].textContent.match(/[a-zA-Z\u0401\u0451\u0410-\u044f]/)) keys[i].textContent = keys[i].textContent.toUpperCase();
+    }
+  } else {
+    for (let i = 0; i < keys.length; i += 1) {
+      if (keys[i].textContent.length === 1 && keys[i].textContent.match(/[a-zA-Z\u0401\u0451\u0410-\u044f]/)) keys[i].textContent = keys[i].textContent.toLowerCase();
+    }
+    capslockKey.classList.remove('key--active');
+  }
 };
 
 const switchLang = () => {
@@ -43,6 +75,8 @@ const switchLang = () => {
   for (let i = 0; i < keys.length; i += 1) {
     keys[i].textContent = Object.values(currentLangBoard)[i];
   }
+  getCurrentShift();
+  getCurrentCaps();
 };
 
 const renderKeyText = (key, text) => {
@@ -58,7 +92,6 @@ const renderKeyButtons = (currLangBoard) => {
     const keyButton = document.createElement('button');
     keyButton.classList.add('key');
     keyButton.setAttribute('data-code', currLangBoardCodes[i]);
-    // keyButton.textContent = currLangBoardKeys[i];
     renderKeyText(keyButton, currLangBoardKeys[i]);
     keyboard.appendChild(keyButton);
   }
@@ -132,10 +165,12 @@ const handleKeyDown = (event) => {
         if (event.ctrlKey) switchLang();
         break;
       case 'CapsLock':
+        capslockCount += 1;
+        getCurrentCaps();
         break;
       case 'ShiftLeft':
-        break;
-      case 'ShiftRight':
+        isShiftActive = 1;
+        getCurrentShift();
         break;
       default:
         break;
@@ -155,6 +190,11 @@ const handleKeyUp = (event) => {
 
   if (keyCode in currentBoard && keyCode !== 'CapsLock') {
     keyboard.querySelector(`[data-code="${keyCode}"]`).classList.remove('key--active');
+  }
+
+  if (keyCode === 'ShiftLeft') {
+    isShiftActive = 0;
+    getCurrentShift();
   }
 };
 
