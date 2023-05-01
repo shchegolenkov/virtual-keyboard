@@ -1,0 +1,115 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-image: linear-gradient(to top, #c1dfc4 0%, #deecdd 100%);
+  background-attachment: fixed;
+  color: #262626;
+}
+
+.container {
+  font-family: Roboto, Arial, sans-serif;
+  margin: 4vh auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.textarea {
+  display: block;
+  width: 700px;
+  min-width: 500px;
+  max-width: 900px;
+  min-height: 100px;
+  max-height: 400px;
+  height: 200px;
+  margin: 10px auto 10px;
+  padding: 20px;
+  border: none;
+  border-radius: 15px;
+  outline: none;
+  font-size: 18px;
+  color: #444444;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  transition: box-shadow 0.3s;
+}
+
+.textarea:hover,
+.textarea:focus {
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 3px 8px;
+}
+
+.textarea::-webkit-resizer {
+  display: none;
+}
+
+.keyboard {
+  display: flex;
+  flex-wrap: wrap;
+  width: 724px;
+  margin: 20px;
+  padding: 10px;
+  background-color: #ececec;
+  border-radius: 5px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 18px 50px -10px;
+  transition: box-shadow 0.3s;
+}
+
+.keyboard:hover {
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 18px 50px -10px;
+}
+
+.key {
+  width: 40px;
+  height: 40px;
+  margin: 3px;
+  border-radius: 3px;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  outline: none;
+  border: none;
+  box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
+  cursor: pointer;
+  transition: background-color 0.18s, box-shadow 0.3s;
+}
+
+.key:hover {
+  box-shadow: rgba(67, 71, 85, 0.7) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
+}
+
+.key--active {
+  box-shadow: rgba(67, 71, 85, 0.7) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
+  background-color: #c6d2d9;
+}
+
+.key[data-code='Backspace'],
+.key[data-code='CapsLock'],
+.key[data-code='ShiftLeft'] {
+  width: 100px;
+}
+
+.key[data-code='Tab'] {
+  width: 50px;
+}
+
+.key[data-code='Delete'] {
+  width: 44px;
+}
+
+.key[data-code='Enter'],
+.key[data-code='ShiftRight'] {
+  width: 86px;
+}
+
+.key[data-code='Space'] {
+  width: 330px;
+}
+
+.description {
+  margin: 8px 0px;
+}
