@@ -175,10 +175,10 @@ const handleKeyDown = (event) => {
         removePrevSym();
         break;
       case 'ControlLeft':
-        if (event.altKey) switchLang();
+        if (event.altKey && !event.repeat) switchLang();
         break;
       case 'AltLeft':
-        if (event.ctrlKey) switchLang();
+        if (event.ctrlKey && !event.repeat) switchLang();
         break;
       case 'CapsLock':
         if (!event.repeat) capslockCount += 1;
